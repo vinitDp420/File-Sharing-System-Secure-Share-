@@ -1,0 +1,117 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: secureshare-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - secureshare-net
+    healthcheck:
+      test: ["CMD","mongosh","--eval","db.adminCommand('ping')"]
+      interval: 10s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: secureshare-backend
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - MONGO_URI=mongodb://mongo:27017/secureshare
+      - JWT_SECRET=superSecretJwtKey_SecureShare_2024!
+      - JWT_REFRESH_SECRET=superSecretRefreshKey_SecureShare_2024!
+      - JWT_EXPIRES_IN=24h
+      - JWT_REFRESH_EXPIRES_IN=7d
+      - NODE_SIM_URLS=http://node-sim-1:6001,http://node-sim-2:6002,http://node-sim-3:6003
+      - ML_SERVICE_URL=http://ml-service:8000
+      - FRONTEND_URL=http://localhost:3000
+      - REPLICATION_FACTOR=2
+    depends_on:
+      mongo:
+        condition: service_healthy
+    volumes:
+      - ./datasets:/datasets
+    networks:
+      - secureshare-net
+
+  ml-service:
+    build: ./ml-service
+    container_name: secureshare-ml
+    ports:
+      - "8000:8000"
+    environment:
+      - DATASETS_DIR=/datasets
+    volumes:
+      - ./datasets:/datasets
+    networks:
+      - secureshare-net
+
+  node-sim-1:
+    build: ./node-simulator
+    container_name: secureshare-node-1
+    ports:
+      - "6001:6001"
+    environment:
+      - PORT=6001
+      - NODE_ID=N001
+      - REGION=us-east
+      - BACKEND_URL=http://backend:5000
+    volumes:
+      - chunks-1:/app/chunks
+    networks:
+      - secureshare-net
+
+  node-sim-2:
+    build: ./node-simulator
+    container_name: secureshare-node-2
+    ports:
+      - "6002:6002"
+    environment:
+      - PORT=6002
+      - NODE_ID=N002
+      - REGION=us-west
+      - BACKEND_URL=http://backend:5000
+    volumes:
+      - chunks-2:/app/chunks
+    networks:
+      - secureshare-net
+
+  node-sim-3:
+    build: ./node-simulator
+    container_name: secureshare-node-3
+    ports:
+      - "6003:6003"
+    environment:
+      - PORT=6003
+      - NODE_ID=N003
+      - REGION=eu-central
+      - BACKEND_URL=http://backend:5000
+    volumes:
+      - chunks-3:/app/chunks
+    networks:
+      - secureshare-net
+
+  frontend:
+    build: ./frontend
+    container_name: secureshare-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - secureshare-net
+
+networks:
+  secureshare-net:
+    driver: bridge
+
+volumes:
+  mongo-data:
+  chunks-1:
+  chunks-2:
+  chunks-3:
