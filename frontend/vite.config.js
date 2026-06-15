@@ -1,7 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// Use repo name as base for GitHub Pages, empty string for local dev
+const isGhPages = process.env.GITHUB_PAGES === 'true'
+
 export default defineConfig({
+  base: isGhPages ? '/File-Sharing-System-Secure-Share-/' : '/',
   plugins: [react()],
   server: {
     port: 3000,

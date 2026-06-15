@@ -60,6 +60,7 @@ export default function Landing() {
             <a href="#features" className="hover:text-white transition-colors">Features</a>
             <a href="#stats" className="hover:text-white transition-colors">Stats</a>
             <a href="#testimonials" className="hover:text-white transition-colors">Testimonials</a>
+            <a href="#team" className="hover:text-white transition-colors">Team</a>
           </div>
           <div className="flex gap-3">
             <Link to="/login" className="btn-ghost text-sm">Sign In</Link>
@@ -219,6 +220,32 @@ export default function Landing() {
                 </div>
               </motion.div>
             ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Team Section */}
+      <section id="team" className="py-24 px-6 bg-black/20">
+        <div className="max-w-7xl mx-auto">
+          <motion.div className="text-center mb-16" initial={{ opacity:0, y:30 }} whileInView={{ opacity:1, y:0 }} viewport={{ once: true }}>
+            <h2 className="text-4xl font-bold mb-4">Project <span className="gradient-text">Developers</span></h2>
+            <p className="text-slate-400 text-lg">The minds behind SecureShare</p>
+          </motion.div>
+          <motion.div className="flex flex-wrap justify-center gap-12" variants={stagger} initial="hidden" whileInView="show" viewport={{ once: true }}>
+            <motion.div variants={fadeUp} whileHover={{ y: -6 }} className="glass p-8 rounded-2xl w-80 text-center relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-500" />
+              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop" alt="Vinit Patil" className="w-24 h-24 rounded-full mx-auto mb-6 object-cover border-2 border-primary-500/20 group-hover:border-primary-500/80 transition-colors" />
+              <h3 className="text-xl font-bold text-white mb-2">Vinit Patil</h3>
+              <p className="text-primary-400 text-sm font-semibold mb-4">Lead Developer & Security Architect</p>
+              <p className="text-slate-400 text-xs leading-relaxed">Designed and built the core distributed chunking storage, AES-256/RSA encryption pipelines, and WebSocket heartbeat protocol.</p>
+            </motion.div>
+            <motion.div variants={fadeUp} whileHover={{ y: -6 }} className="glass p-8 rounded-2xl w-80 text-center relative overflow-hidden group">
+              <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-violet-500 to-purple-500" />
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop" alt="Chinmay Chaudhari" className="w-24 h-24 rounded-full mx-auto mb-6 object-cover border-2 border-violet-500/20 group-hover:border-violet-500/80 transition-colors" />
+              <h3 className="text-xl font-bold text-white mb-2">Chinmay Chaudhari</h3>
+              <p className="text-violet-400 text-sm font-semibold mb-4">Machine Learning Engineer</p>
+              <p className="text-slate-400 text-xs leading-relaxed">Developed and integrated real-time Isolation Forest anomaly detection, file classifiers, and Gradient Boosting latency models.</p>
+            </motion.div>
           </motion.div>
         </div>
       </section>
