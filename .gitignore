@@ -1,0 +1,63 @@
+# ── Dependencies ──────────────────────────────────────────────
+node_modules/
+.npm
+.yarn/
+.pnp.*
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+venv/
+env/
+.env.local
+.venv/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Build outputs ─────────────────────────────────────────────
+frontend/dist/
+frontend/.vite/
+*.tsbuildinfo
+
+# ── Environment files ─────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Logs ──────────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── OS files ──────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── IDE / Editor ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.qodo/
+
+# ── Docker ────────────────────────────────────────────────────
+.docker/
+
+# ── ML model artifacts ────────────────────────────────────────
+ml-service/models/*.pkl
+ml-service/models/*.joblib
+
+# ── Uploaded chunks ───────────────────────────────────────────
+node-simulator/chunks/*
+!node-simulator/chunks/.gitkeep
