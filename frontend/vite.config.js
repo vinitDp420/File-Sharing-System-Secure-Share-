@@ -8,6 +8,7 @@ export default defineConfig({
   base: isGhPages ? '/File-Sharing-System-Secure-Share-/' : '/',
   plugins: [react()],
   server: {
+    host: true,
     port: 3000,
     proxy: {
       '/api': { target: 'http://localhost:5000', changeOrigin: true },
