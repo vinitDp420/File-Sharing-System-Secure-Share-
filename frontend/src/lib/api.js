@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { demoData } from './demoData'
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api'
 
@@ -21,8 +22,18 @@ api.interceptors.request.use((config) => {
         }
       });
     }
-    // Prevent crashes on the dashboard by returning empty data
-    return Promise.reject({ __demoMock: true, data: [] });
+    
+    // Serve rich demo data based on endpoint
+    let mockData = [];
+    if (config.url?.includes('/admin/stats')) mockData = demoData.stats;
+    else if (config.url?.includes('/admin/activity')) mockData = demoData.activity;
+    else if (config.url?.includes('/admin/logs')) mockData = demoData.logs;
+    else if (config.url?.includes('/files')) mockData = demoData.files;
+    else if (config.url?.includes('/nodes')) mockData = demoData.nodes;
+    else if (config.url?.includes('/admin/users')) mockData = demoData.users;
+
+    // Prevent crashes on the dashboard by returning the mock data
+    return Promise.reject({ __demoMock: true, data: mockData });
   }
 
   const token = localStorage.getItem('token')
