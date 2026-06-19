@@ -1,0 +1,62 @@
+services:
+  - type: web
+    name: secureshare-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    rootDir: backend
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://vinitdp420.github.io
+
+  - type: web
+    name: secureshare-ml
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDir: ml-service
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+
+  - type: web
+    name: secureshare-node-1
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    rootDir: node-simulator
+    envVars:
+      - key: NODE_ID
+        value: N001
+      - key: REGION
+        value: us-east
+
+  - type: web
+    name: secureshare-node-2
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    rootDir: node-simulator
+    envVars:
+      - key: NODE_ID
+        value: N002
+      - key: REGION
+        value: us-west
+
+  - type: web
+    name: secureshare-node-3
+    env: node
+    buildCommand: npm install
+    startCommand: node server.js
+    rootDir: node-simulator
+    envVars:
+      - key: NODE_ID
+        value: N003
+      - key: REGION
+        value: eu-central
