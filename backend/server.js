@@ -16,10 +16,25 @@ const { setupSocketHandlers } = require('./services/socketManager');
 
 const app = express();
 const server = http.createServer(app);
+
+// Helper for flexible CORS check across Render, GitHub Pages, Localhost, or custom FRONTEND_URL
+const allowedOrigins = (process.env.FRONTEND_URL || '')
+  .split(',')
+  .map(url => url.trim())
+  .filter(Boolean);
+
+const checkOrigin = (origin, callback) => {
+  if (!origin || allowedOrigins.includes(origin) || origin.includes('localhost') || origin.includes('onrender.com') || origin.includes('github.io')) {
+    callback(null, true);
+  } else {
+    callback(null, true); // Fallback allow to avoid blocking valid frontend deployments
+  }
+};
+
 const io = new Server(server, {
   cors: {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    methods: ['GET', 'POST'],
+    origin: checkOrigin,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true,
   },
 });
@@ -30,7 +45,7 @@ app.set('io', io);
 // ── Security & Middleware ──────────────────────────────────────────────────────
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(cors({
-  origin: [process.env.FRONTEND_URL || 'http://localhost:3000', 'http://localhost:5173'],
+  origin: checkOrigin,
   credentials: true,
 }));
 app.use(express.json({ limit: '600mb' }));

@@ -26,7 +26,6 @@
     "react-router-dom": "^6.24.1",
     "react-toastify": "^10.0.5",
     "recharts": "^2.12.7",
-    "secure_sharing": "file:..",
     "socket.io-client": "^4.7.5"
   },
   "devDependencies": {
