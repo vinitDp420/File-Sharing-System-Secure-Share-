@@ -93,7 +93,10 @@ mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/secureshare
     });
   })
   .catch(err => {
-    console.error('❌ MongoDB connection error:', err);
+    console.error('❌ MongoDB connection error:', err.message);
+    if (!process.env.MONGO_URI || process.env.MONGO_URI.includes('localhost')) {
+      console.error('💡 CLOUD DEPLOYMENT HINT: You are trying to connect to localhost MongoDB. On Render, add the MONGO_URI environment variable with your MongoDB Atlas cloud connection string!');
+    }
     process.exit(1);
   });
 
