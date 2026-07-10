@@ -82,22 +82,41 @@ app.use((err, req, res, next) => {
 // ── Database + Server ─────────────────────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/secureshare')
-  .then(() => {
+async function startServer() {
+  let uri = process.env.MONGO_URI || 'mongodb://localhost:27017/secureshare';
+
+  if (uri === 'memory' || process.env.USE_MEMORY_DB === 'true') {
+    console.log('⚡ Starting embedded MongoDB Memory Server...');
+    const { MongoMemoryServer } = require('mongodb-memory-server');
+    const mongoServer = await MongoMemoryServer.create();
+    uri = mongoServer.getUri() + 'secureshare';
+  }
+
+  try {
+    await mongoose.connect(uri);
     console.log('✅ MongoDB connected');
-    server.listen(PORT, () => {
-      console.log(`🚀 Backend running on http://localhost:${PORT}`);
-      // Start node heartbeat checker
-      const { startHeartbeatChecker } = require('./services/nodeManager');
-      startHeartbeatChecker(io);
-    });
-  })
-  .catch(err => {
-    console.error('❌ MongoDB connection error:', err.message);
-    if (!process.env.MONGO_URI || process.env.MONGO_URI.includes('localhost')) {
-      console.error('💡 CLOUD DEPLOYMENT HINT: You are trying to connect to localhost MongoDB. On Render, add the MONGO_URI environment variable with your MongoDB Atlas cloud connection string!');
+  } catch (err) {
+    console.error('❌ Primary MongoDB connection failed:', err.message);
+    console.log('⚡ Automatic Fallback: Launching embedded MongoDB Memory Server (100% Free / Zero Setup)...');
+    try {
+      const { MongoMemoryServer } = require('mongodb-memory-server');
+      const mongoServer = await MongoMemoryServer.create();
+      const fallbackUri = mongoServer.getUri() + 'secureshare';
+      await mongoose.connect(fallbackUri);
+      console.log('✅ Embedded MongoDB Memory Server connected successfully!');
+    } catch (memErr) {
+      console.error('❌ Fatal Database Error:', memErr.message);
+      process.exit(1);
     }
-    process.exit(1);
+  }
+
+  server.listen(PORT, () => {
+    console.log(`🚀 Backend running on http://localhost:${PORT}`);
+    const { startHeartbeatChecker } = require('./services/nodeManager');
+    startHeartbeatChecker(io);
   });
+}
+
+startServer();
 
 module.exports = { app, io };
